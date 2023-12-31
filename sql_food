@@ -151,8 +151,7 @@ INSERT INTO food_type (type_name) VALUES
 select * from food_type
 
 -- phần giải ********************
-	-- Tìm 5 người đã like nhà hàng nhiều nhất
-	
+	-- 1.Tìm 5 người đã like nhà hàng nhiều nhất
 		-- inner join
 SELECT u.user_id, u.full_name, COUNT(lr.res_id) AS total_likes FROM users AS u
 INNER JOIN like_res AS lr
@@ -169,19 +168,19 @@ GROUP BY u.user_id , u.full_name
 ORDER BY total_likeS DESC
 LIMIT 5;
 
-	-- Tìm 2 nhà hàng có lượt like nhiều nhất
+	-- 2.Tìm 2 nhà hàng có lượt like nhiều nhất
 SELECT r.res_id , r.res_name, COUNT(lr.res_id) AS total_like FROM restaurant as r
 LEFT JOIN like_res AS lr ON r.res_id = lr.res_id	
 GROUP BY r.res_id 
 ORDER BY total_like DESC
 LIMIT 2
-	-- tìm người đã đặt hàng nhiều nhất
+	-- 3.tìm người đã đặt hàng nhiều nhất
 SELECT u.user_id, u.full_name, COUNT(o.user_id) AS total_orders FROM users as u 
 INNER JOIN orders AS o ON u.user_id = o.user_id
 GROUP BY u.full_name, u.user_id
 ORDER by total_orders DESC
 LIMIT 1
-	-- tìm người dùng không hoạt động trong hệ thống ( không đặt hàng, không like, không đánh giá nhà hàng)
+	-- 4.tìm người dùng không hoạt động trong hệ thống ( không đặt hàng, không like, không đánh giá nhà hàng)
 		-- left join
 SELECT u.user_id, u.full_name, o.user_id AS dat_hang, lr.user_id AS luot_thich, rr.user_id AS so_lan_danh_gia FROM users AS u
 LEFT JOIN orders AS o ON u.user_id = o.user_id
