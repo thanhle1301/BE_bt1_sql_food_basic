@@ -148,7 +148,7 @@ INSERT INTO food_type (type_name) VALUES
     ('Gỏi Cuốn'),
     ('Chè'),
     ('Lẩu');
-
+select * from food_type
 
 -- phần giải ********************
 	-- Tìm 5 người đã like nhà hàng nhiều nhất
@@ -161,7 +161,7 @@ GROUP BY u.user_id, u.full_name
 ORDER BY total_likes DESC
 LIMIT 5;
 
-		-- left join
+		-- left join -> TỐN GIỮ LIỆU HƠN SO VS BÀI NÀY
 SELECT u.user_id, u.full_name, COUNT(lr.res_id) AS total_likes FROM users AS u
 LEFT JOIN like_res AS lr 
 ON lr.user_id = u.user_id
@@ -170,28 +170,37 @@ ORDER BY total_likeS DESC
 LIMIT 5;
 
 	-- Tìm 2 nhà hàng có lượt like nhiều nhất
-select r.res_id , r.res_name, count(lr.res_id) as total_like from restaurant as r
-left join like_res as lr
-on r.res_id = lr.res_id	
-group BY r.res_id
-order by total_like DESC
-limit 2
+SELECT r.res_id , r.res_name, COUNT(lr.res_id) AS total_like FROM restaurant as r
+LEFT JOIN like_res AS lr ON r.res_id = lr.res_id	
+GROUP BY r.res_id 
+ORDER BY total_like DESC
+LIMIT 2
 	-- tìm người đã đặt hàng nhiều nhất
-SELECT u.user_id, u.full_name, count(o.user_id) as total_orders  from users as u 
-inner join orders as o 
-on u.user_id = o.user_id
-group by u.full_name, u.user_id
+SELECT u.user_id, u.full_name, COUNT(o.user_id) AS total_orders FROM users as u 
+INNER JOIN orders AS o ON u.user_id = o.user_id
+GROUP BY u.full_name, u.user_id
 ORDER by total_orders DESC
-limit 1
+LIMIT 1
 	-- tìm người dùng không hoạt động trong hệ thống ( không đặt hàng, không like, không đánh giá nhà hàng)
-SELECT u.user_id, u.full_name, o.user_id as dat_hang, lr.user_id as luot_thich, rr.user_id as so_lan_danh_gia from users as u
-left join orders as o 
-on u.user_id = o.user_id
-left join like_res as lr 
-on u.user_id = lr.user_id
-left join rate_res as rr 
-on u.user_id = rr.user_id
-where o.user_id is NULL && lr.user_id is NULL && rr.user_id  is NULL
+		-- left join
+SELECT u.user_id, u.full_name, o.user_id AS dat_hang, lr.user_id AS luot_thich, rr.user_id AS so_lan_danh_gia FROM users AS u
+LEFT JOIN orders AS o ON u.user_id = o.user_id
+LEFT JOIN like_res AS lr ON u.user_id = lr.user_id
+LEFT JOIN rate_res AS rr ON u.user_id = rr.user_id
+WHERE o.user_id is NULL && lr.user_id is NULL && rr.user_id  is NULL
+
+		-- EXISTS
+SELECT u.user_id, u.full_name FROM users AS u 
+WHERE NOT EXISTS (
+	SELECT * FROM like_res AS lr WHERE u.user_id = lr.user_id
+	)
+AND NOT EXISTS(
+	SELECT * FROM rate_res AS rr WHERE u.user_id = rr.user_id
+	)
+AND NOT EXISTS(
+	SELECT * FROM orders AS o WHERE u.user_id = o.user_id
+	)
+
 
 
 
